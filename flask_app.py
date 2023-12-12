@@ -4,6 +4,12 @@ import mysql.connector
 
 app = Flask(__name__)
 
+db_config = {
+    'host': 'zombyfraser.mysql.pythonanywhere-services.com',
+    'user': 'zombyfraser',
+    'database': 'zombyfraser$default'
+}
+
 @app.route('/')
 def loginPage():
     return render_template('login.html')
