@@ -1,9 +1,34 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Home Page</title>
+    <title>Your Page Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1>Welcome to My Flask App!</h1>
+    <!-- Header -->
+    <div id="header">
+        <button id="requestMovieBtn">Request Movie</button>
+    </div>
+
+    <!-- Movie Request Modal (hidden initially) -->
+    <div id="movieRequestModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <label for="movieTitle">Movie Title:</label>
+            <input type="text" id="movieTitle" name="movieTitle">
+
+            <label for="movieYear">Year:</label>
+            <input type="text" id="movieYear" name="movieYear">
+
+            <label for="imdbLink">OR IMDB Link:</label>
+            <input type="text" id="imdbLink" name="imdbLink">
+
+            <button onclick="submitMovieRequest()">Submit Request</button>
+        </div>
+    </div>
+
+    <!-- Rest of your page content -->
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
