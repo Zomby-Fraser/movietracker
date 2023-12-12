@@ -1,12 +1,11 @@
-from flask import Flask, render_template
+
+# A very simple Flask Hello World app for you to get started with...
+
+from flask import Flask
 
 app = Flask(__name__)
 
 @app.route('/')
-def loginPage():
-    return "Hello"
-    return render_template('login.html')
-
-if __name__ == '__main__':
-    app.run(debug=True)
+def hello_world():
+    return 'Hello from Flask!'
 
