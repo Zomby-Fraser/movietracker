@@ -4,7 +4,6 @@ app = Flask(__name__)
 
 @app.route('/')
 def loginPage():
-    return 'Hello from Flask!'
     return render_template('login.html')
 
 if __name__ == '__main__':
