@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session
 import hashlib
 import mysql.connector
 
 app = Flask(__name__)
+app.secret_key = 'klahSKDbjasnio'
 
 db_config = {
     'host': 'zombyfraser.mysql.pythonanywhere-services.com',
@@ -17,7 +18,10 @@ def loginPage():
 
 @app.route('/home')
 def homePage():
-    return "Hello"
+    if 'username' in session:
+        return 'This is a protected route.'
+    else:
+        return 'You are not logged in.', 401
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -44,6 +48,7 @@ def login():
         conn.close()
 
         if user:
+            session['username'] = username  # Store username in session
             return jsonify({'message': 'Login successful'}), 200
         else:
             return jsonify({'error': 'Invalid credentials'}), 401
