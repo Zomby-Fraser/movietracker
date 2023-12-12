@@ -28,6 +28,10 @@
     width: 80%;
 }
 
+.query-type {
+    background-color: #fefefe;
+}
+
 .close {
     color: #aaa;
     float: right;
