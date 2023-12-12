@@ -22,7 +22,7 @@ def loginPage():
 @app.route('/home')
 def homePage():
     if 'username' in session:
-        return 'This is a protected route.'
+        return render_template('home.html')
     else:
         return 'You are not logged in.', 401
 
