@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request, jsonify, session
 import hashlib
 import mysql.connector
+import requests
+import re
+from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 app.secret_key = 'klahSKDbjasnio'
@@ -55,6 +58,43 @@ def login():
 
     except mysql.connector.Error as err:
         return jsonify({'error': str(err)}), 500
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)  # Remove the username from the session
+    return 'You have been logged out.'
+
+@app.route('/add_movie', methods=['POST'])
+def addMovie():
+    try:
+        url = request.form.get('url')
+
+        response = requests.get(url)
+        response.raise_for_status()
+
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        # Extracting the title
+        title = soup.find('h1').text.strip()
+
+        # Extracting the year of release
+        year = soup.find('span', id='titleYear').text.strip('()')
+
+        # Extracting the IMDB ID from the URL
+        imdb_id = re.search(r'/title/(tt\d+)/', url).group(1)
+
+        return {
+            'title': title,
+            'imdb_id': imdb_id,
+            'year_of_release': year
+        }
+
+    except requests.RequestException as e:
+        print(f'Error fetching the IMDB page: {e}')
+        return None
+    except AttributeError:
+        print('Error parsing IMDB page. The structure of the page might have changed.')
+        return None
 
 if __name__ == '__main__':
     app.run(debug=True)

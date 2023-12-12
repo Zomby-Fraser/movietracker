@@ -2,44 +2,7 @@
 <html>
 <head>
     <title>Login Form</title>
-    <style>
-        /* Basic styling for the form */
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-        }
-        .login-form {
-            width: 300px;
-            padding: 20px;
-            background: #fff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        input[type="text"], input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div class="login-form">
@@ -53,26 +16,6 @@
             <input type="submit" value="Login" onclick="login(event)">
         </form>
     </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
-<script>
-    async function login(event) {
-        event.preventDefault();
-        let username = document.getElementById('username').value;
-        let password = document.getElementById('password').value;
-        const response = await fetch('http://zombyfraser.pythonanywhere.com/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `username=${username}&password=${password}`
-        });
-        if (response.ok) {
-            const data = await response.json();
-            console.log('Login successful:', data);
-            window.location.href = '/home';
-        } else {
-            console.error('Login failed:', response.status, response.statusText);
-        }
-    }
-</script>
 </html>

@@ -1,0 +1,41 @@
+<!-- templates/layout.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Other head elements -->
+</head>
+<body>
+    {% block header %}
+    <!-- Header -->
+    <div id="header">
+        <button id="requestMovieBtn">Request Movie</button>
+    </div>
+
+    <!-- Movie Request Modal (hidden initially) -->
+    <div id="movieRequestModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <form id="movieRequestForm">
+                <label for="movieTitle">Movie Title:</label>
+                <input type="text" id="movieTitle" name="movieTitle">
+
+                <label for="movieYear">Year:</label>
+                <input type="text" id="movieYear" name="movieYear">
+
+                <label for="imdbLink">OR IMDB Link:</label>
+                <input type="text" id="imdbLink" name="imdbLink">
+
+                <button type="submit">Submit Request</button>
+            </form>
+        </div>
+    </div>
+    {% endblock %}
+
+    {% block content %}{% endblock %}
+    
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
