@@ -33,9 +33,13 @@ def homePage():
         WHERE m.movie_key NOT IN (SELECT movie_key FROM MovieCollection)
         GROUP BY m.movie_key;
         """
-        cursor = conn.cursor(cursor_class=MySQLCursorDict)
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
         cursor.execute(query)
-        movies = cursor.fetchall()
+        column_names = cursor.column_names
+        movies = [dict(zip(column_names, row)) for row in cursor.fetchall()]
+
         cursor.close()
         conn.close()
         
