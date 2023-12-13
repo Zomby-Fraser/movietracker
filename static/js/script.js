@@ -14,6 +14,6 @@ async function login(event) {
         console.log('Login successful:', data);
         window.location.href = '/home';
     } else {
-        console.error('Login failed:', response.status, response.statusText);
+        console.error('Login failed:', response.status, response.statusText, response.error);
     }
 }
