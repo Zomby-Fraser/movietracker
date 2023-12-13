@@ -12,7 +12,7 @@ async function login(event) {
     if (response.ok) {
         const data = await response.json();
         console.log('Login successful:', data);
-        window.location.href = '/home';
+        // window.location.href = '/home';
     } else {
         console.error('Login failed:', response.status, response.statusText);
     }
