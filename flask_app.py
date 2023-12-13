@@ -67,7 +67,8 @@ def logout():
 @app.route('/add_movie', methods=['POST'])
 def addMovie():
     try:
-        url = request.form.get('url')
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36'}
+        url = request.form.get('url', headers)
 
         response = requests.get(url)
         response.raise_for_status()
@@ -78,10 +79,10 @@ def addMovie():
         title = soup.find('h1').text.strip()
 
         # Extracting the year of release
-        year = soup.find('span', id='titleYear').text.strip('()')
+        year = soup.find_all('div', attrs={'class':'sc-69e49b85-0 jqlHBQ'})[0].find('a').text
 
         # Extracting the IMDB ID from the URL
-        imdb_id = re.search(r'/title/(tt\d+)/', url).group(1)
+        imdb_id = url.split('/')[4]
 
         return {
             'title': title,
