@@ -2,9 +2,15 @@ document.getElementById('requestMovieBtn').addEventListener('click', function() 
     document.getElementById('movieRequestModal').style.display = 'block';
 });
 
-function closeModal() {
-    document.getElementById('movieRequestModal').style.display = 'none';
-}
+document.getElementById('imdbLinkRadio').addEventListener('change', function() {
+    document.getElementById('linkField').style.display = 'block';
+    document.getElementById('searchFields').style.display = 'none';
+});
+
+document.getElementById('imdbQueryRadio').addEventListener('change', function() {
+    document.getElementById('linkField').style.display = 'none';
+    document.getElementById('searchFields').style.display = 'block';
+});
 
 function submitMovieRequest() {
     var title = document.getElementById('movieTitle').value;
@@ -16,3 +22,8 @@ function submitMovieRequest() {
 
     closeModal(); // Close the modal after submission
 }
+
+function closeModal() {
+    document.getElementById('movieRequestModal').style.display = 'none';
+}
+
