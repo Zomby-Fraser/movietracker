@@ -68,9 +68,9 @@ def logout():
 def addMovie():
     try:
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36'}
-        url = request.form.get('url', headers)
+        url = request.form.get('url')
 
-        response = requests.get(url)
+        response = requests.get(url, headers=headers)
         response.raise_for_status()
 
         soup = BeautifulSoup(response.text, 'html.parser')
