@@ -22,7 +22,22 @@ def loginPage():
 @app.route('/home')
 def homePage():
     if 'username' in session:
-        return render_template('home.html')
+        conn = mysql.connector.connect(**db_config)
+        # Example query (adjust based on your actual database schema)
+        query = """
+        SELECT m.movie_key, m.title, m.year_of_release, mn.download_link, GROUP_CONCAT(ms.source_name) AS sources
+        FROM MoviesNeeded mn
+        JOIN Movies m ON mn.movie_key = m.movie_key
+        LEFT JOIN MovieSources ms ON m.movie_key = ms.movie_key
+        WHERE m.movie_key NOT IN (SELECT movie_key FROM MovieCollection)
+        GROUP BY m.movie_key;
+        """
+        cursor = conn.cursor()
+        cursor.execute(query)
+        movies = cursor.fetchall()
+        cursor.close()
+        
+        return render_template('home.html', movies=movies)
     else:
         return 'You are not logged in.', 401
 

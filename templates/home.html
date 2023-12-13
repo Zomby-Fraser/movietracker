@@ -36,6 +36,37 @@
         </div>
     </div>
 
+    <h1>Manage Movie Requests</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Year of Release</th>
+                <th>Sources</th>
+                <th>Download Link</th>
+                <th>Select Source</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for movie in movies %}
+            <tr>
+                <td>{{ movie.title }}</td>
+                <td>{{ movie.year_of_release }}</td>
+                <td>{{ movie.sources }}</td>
+                <td>
+                    {% if movie.download_link %}
+                        <a href="{{ movie.download_link }}">Download</a>
+                    {% endif %}
+                </td>
+                <td>
+                    <!-- Dropdown or radio buttons for selecting source -->
+                    <!-- Implement as per your requirement -->
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
     <!-- Rest of your page content -->
 
     <script src="{{ url_for('static', filename='js/home.js') }}"></script>
