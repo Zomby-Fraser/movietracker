@@ -51,6 +51,8 @@ def login():
         conn.close()
 
         if user:
+            user_id = user['id']
+            session['id'] = user_id
             session['username'] = username  # Store username in session
             return jsonify({'message': 'Login successful'}), 200
         else:
