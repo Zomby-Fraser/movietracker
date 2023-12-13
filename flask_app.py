@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify, session
 import hashlib
 import mysql.connector
+from mysql.connector.cursor import MySQLCursorDict
 import requests
 import re
 from bs4 import BeautifulSoup
@@ -32,10 +33,11 @@ def homePage():
         WHERE m.movie_key NOT IN (SELECT movie_key FROM MovieCollection)
         GROUP BY m.movie_key;
         """
-        cursor = conn.cursor()
+        cursor = conn.cursor(cursor_class=MySQLCursorDict)
         cursor.execute(query)
         movies = cursor.fetchall()
         cursor.close()
+        conn.close()
         
         return render_template('home.html', movies=movies)
     else:
