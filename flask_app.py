@@ -61,7 +61,7 @@ def login():
     except mysql.connector.Error as err:
         return jsonify({'error': str(err)}), 500
     except Exception as e:
-        print(e)
+        return jsonify({'error': str(err)}), 500
 
 @app.route('/logout')
 def logout():
