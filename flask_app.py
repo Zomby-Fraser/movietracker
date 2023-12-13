@@ -11,7 +11,7 @@ app.secret_key = 'klahSKDbjasnio'
 db_config = {
     'host': 'zombyfraser.mysql.pythonanywhere-services.com',
     'user': 'zombyfraser',
-    'password': 'modMad-hibso2-nunseg',
+    'password': 'dobqod-Faxjoc-zagbi4',
     'database': 'zombyfraser$default'
 }
 
