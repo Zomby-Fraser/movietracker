@@ -95,6 +95,10 @@ def addMovie():
         query = "INSERT INTO MoviesNeeded (movie_key) VALUES (%s)"
         cursor.execute(query, (new_movie_key))
 
+        conn.commit()
+        cursor.close()
+        conn.close()
+
         return {
             'title': title,
             'imdb_id': imdb_id,
