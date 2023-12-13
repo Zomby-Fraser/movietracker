@@ -87,7 +87,7 @@ def addMovie():
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
 
-        query = "INSERT INTO Movies (title, imdb_id, year_of_release) VALUES (%s, %s, %i);"
+        query = "INSERT INTO Movies (title, imdb_id, year_of_release) VALUES (%s, %s, %s);"
         cursor.execute(query, (title, imdb_id, year))
 
         new_movie_key = cursor.lastrowid
