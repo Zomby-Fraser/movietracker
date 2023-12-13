@@ -14,19 +14,24 @@
     <div id="movieRequestModal" class="modal">
         <div class="modal-content">
             <div class="query-type">
-                <input type="radio" id="imdb-link" name="imdb-link" checked>Submit Link
-                <input type="radio" id="imdb-query" name="imdb-link">Search
+                <input type="radio" id="imdbLinkRadio" name="queryType" value="link">Submit Link
+                <input type="radio" id="imdbQueryRadio" name="queryType" value="search" checked>Search
             </div>
             <span class="close" onclick="closeModal()">&times;</span>
-            <label for="movieTitle">Movie Title:</label>
-            <input type="text" id="movieTitle" name="movieTitle">
-
-            <label for="movieYear">Year:</label>
-            <input type="text" id="movieYear" name="movieYear">
-
-            <label for="imdbLink">OR IMDB Link:</label>
-            <input type="text" id="imdbLink" name="imdbLink">
-
+    
+            <div id="searchFields">
+                <label for="movieTitle">Movie Title:</label>
+                <input type="text" id="movieTitle" name="movieTitle">
+    
+                <label for="movieYear">Year:</label>
+                <input type="text" id="movieYear" name="movieYear">
+            </div>
+    
+            <div id="linkField" style="display:none;">
+                <label for="imdbLink">IMDB Link:</label>
+                <input type="text" id="imdbLink" name="imdbLink">
+            </div>
+    
             <button onclick="submitMovieRequest()">Submit Request</button>
         </div>
     </div>
