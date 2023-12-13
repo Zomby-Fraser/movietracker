@@ -84,6 +84,17 @@ def addMovie():
         # Extracting the IMDB ID from the URL
         imdb_id = url.split('/')[4]
 
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        query = "INSERT INTO Movies (title, imdb_id, year_of_release) VALUES (%s, %s, %i);"
+        cursor.execute(query, (title, imdb_id, year))
+
+        new_movie_key = cursor.lastrowid
+
+        query = "INSERT INTO MoviesNeeded (movie_key) VALUES (%i)"
+        cursor.execute(query, (new_movie_key))
+
         return {
             'title': title,
             'imdb_id': imdb_id,
