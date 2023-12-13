@@ -93,7 +93,7 @@ def addMovie():
         new_movie_key = cursor.lastrowid
 
         query = "INSERT INTO MoviesNeeded (movie_key) VALUES (%s)"
-        cursor.execute(query, (new_movie_key))
+        cursor.execute(query, (new_movie_key,))
 
         conn.commit()
         cursor.close()
