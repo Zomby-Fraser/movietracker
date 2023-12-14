@@ -59,7 +59,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    <!-- Assuming movie.sources is a comma-separated string -->
+                    <!-- Apply the default filter and split in the for loop -->
                     {% for source in movie.sources|default('', true).split(',') %}
                         {% if source %}
                             <label class="source-option">
@@ -71,7 +71,8 @@
                 </td>
             </tr>
             {% endfor %}
-        </tbody>        
+        </tbody>
+                
     </table>
     
 
