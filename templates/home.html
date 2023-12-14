@@ -60,7 +60,6 @@
                 </td>
                 <td>
                     <!-- Assuming movie.sources is a comma-separated string -->
-                    {% for source in (movie.sources|default('', true)).split(',') %}
                     {% for source in sources %}
                         {% if source %}
                             <label class="source-option">
