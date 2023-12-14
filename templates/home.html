@@ -60,8 +60,7 @@
                 </td>
                 <td>
                     <!-- Apply the default filter and split in the for loop -->
-                    {% set source_list = movie.sources|default('', true).split(',') %}
-                    {% for source in source_list %}
+                    {% for source in sources[movie_key] %}
                         {% if source %}
                             <label class="source-option">
                                 <input type="radio" name="source_{{ movie.movie_key }}" value="{{ source }}">

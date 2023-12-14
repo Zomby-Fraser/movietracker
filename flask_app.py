@@ -40,10 +40,18 @@ def homePage():
         column_names = cursor.column_names
         movies = [dict(zip(column_names, row)) for row in cursor.fetchall()]
 
+        sources = {}
+
+        for movie in movies:
+            movie_source_list = []
+            for sources in movie['sources'].split(","):
+                movie_source_list[sources]
+            sources['movie_key'] = movie_source_list
+
         cursor.close()
         conn.close()
         
-        return render_template('home.html', movies=movies)
+        return render_template('home.html', movies=movies, sources=sources)
     else:
         return 'You are not logged in.', 401
 
