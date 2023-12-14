@@ -60,7 +60,7 @@
                 </td>
                 <td>
                     <!-- Assuming movie.sources is a comma-separated string -->
-                    {% for source in sources %}
+                    {% for source in movie.sources|default('', true).split(',') %}
                         {% if source %}
                             <label class="source-option">
                                 <input type="radio" name="source_{{ movie.movie_key }}" value="{{ source }}">
