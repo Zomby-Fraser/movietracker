@@ -59,19 +59,20 @@
                     {% endif %}
                 </td>
                 <td>
-                    <select name="source_{{ movie.movie_key }}" onchange="setPreferredSource(this, {{ movie.movie_key }})">
-                        <!-- Use the default filter to provide an empty string if movie.sources is None -->
-                        {% for source in (movie.sources|default('', true)).split(',') %}
-                            {% if source %}
-                                <option value="{{ source }}">{{ source }}</option>
-                            {% endif %}
-                        {% endfor %}
-                    </select>
+                    <!-- Assuming movie.sources is a comma-separated string -->
+                    {% set sources = movie.sources|default('', true).split(',') %}
+                    {% for source in sources %}
+                        {% if source %}
+                            <label class="source-option">
+                                <input type="radio" name="source_{{ movie.movie_key }}" value="{{ source }}">
+                                {{ source }}
+                            </label>
+                        {% endif %}
+                    {% endfor %}
                 </td>
             </tr>
             {% endfor %}
-        </tbody>
-        
+        </tbody>        
     </table>
     
 
