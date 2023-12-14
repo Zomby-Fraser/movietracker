@@ -59,7 +59,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    <select name="source_{{ movie.movie_key }}" onchange="setPreferredSource(this, {{ movie.movie_key }})">
+                    <select name="source_{{ movie.movie_key }}">
                         {% for source in movie.sources.split(',') %}
                         <option value="{{ source }}">{{ source }}</option>
                         {% endfor %}
