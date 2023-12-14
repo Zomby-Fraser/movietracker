@@ -61,7 +61,7 @@
                 <td>
                     <select name="source_{{ movie.movie_key }}" onchange="setPreferredSource(this, {{ movie.movie_key }})">
                         <!-- Use the default filter to provide an empty string if movie.sources is None -->
-                        {% for source in movie.sources|default('', true).split(',') %}
+                        {% for source in (movie.sources|default('', true)).split(',') %}
                             {% if source %}
                                 <option value="{{ source }}">{{ source }}</option>
                             {% endif %}
