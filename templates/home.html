@@ -42,9 +42,8 @@
             <tr>
                 <th>Title</th>
                 <th>Year of Release</th>
-                <th>Sources</th>
-                <th>Download Link</th>
-                <th>Select Source</th>
+                <th>Available Sources</th>
+                <th>Preferred Source</th>
             </tr>
         </thead>
         <tbody>
@@ -52,20 +51,25 @@
             <tr>
                 <td>{{ movie.title }}</td>
                 <td>{{ movie.year_of_release }}</td>
-                <td>{{ movie.sources }}</td>
                 <td>
                     {% if movie.download_link %}
-                    <a href="{{ movie.download_link }}">Download</a>
+                        <a href="{{ movie.download_link }}">Download</a>
+                    {% else %}
+                        <span>No link available</span>
                     {% endif %}
                 </td>
                 <td>
-                    <!-- Dropdown or radio buttons for selecting source -->
-                    <!-- Implement as per your requirement -->
+                    <select name="source_{{ movie.movie_key }}" onchange="setPreferredSource(this, {{ movie.movie_key }})">
+                        {% for source in movie.sources.split(',') %}
+                        <option value="{{ source }}">{{ source }}</option>
+                        {% endfor %}
+                    </select>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    
 
     <!-- Rest of your page content -->
 
