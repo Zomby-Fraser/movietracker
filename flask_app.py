@@ -46,7 +46,7 @@ def homePage():
             movie_source_list = []
             for sources in movie['sources'].split(","):
                 movie_source_list.append(sources)
-            sources['movie_key'] = movie_source_list
+            sources[movie['movie_key']] = movie_source_list
 
         cursor.close()
         conn.close()
