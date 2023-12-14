@@ -54,9 +54,9 @@
                 <td>{{ movie.year_of_release }}</td>
                 <td>{{ movie.sources }}</td>
                 <td>
-                    {{ if movie.download_link }}
+                    {% if movie.download_link %}
                     <a href="{{ movie.download_link }}">Download</a>
-                    {{ endif }}
+                    {% endif %}
                 </td>
                 <td>
                     <!-- Dropdown or radio buttons for selecting source -->
