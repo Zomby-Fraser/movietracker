@@ -2,7 +2,7 @@ async function login(event) {
     event.preventDefault();
     let username = document.getElementById('username').value;
     let password = document.getElementById('password').value;
-    const response = await fetch('http://zombyfraser.pythonanywhere.com/login', {
+    const response = await fetch('http://127.0.0.1:5000/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',

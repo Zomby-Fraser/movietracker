@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.secret_key = 'klahSKDbjasnio'
 
 db_config = {
-    'host': 'zombyfraser.mysql.pythonanywhere-services.com',
+    'host': 'localhost',
     'user': 'zombyfraser',
     'password': 'dobqod-Faxjoc-zagbi4',
     'database': 'zombyfraser$default'
@@ -26,12 +26,17 @@ def homePage():
         conn = mysql.connector.connect(**db_config)
         # Example query (adjust based on your actual database schema)
         query = """
-        SELECT m.movie_key, m.title, m.year_of_release, mn.download_link, GROUP_CONCAT(ms.source_name) AS sources
+        SELECT 
+            m.movie_key, 
+            m.title, 
+            m.year_of_release, 
+            mn.download_link, 
+            GROUP_CONCAT(ms.source_name) AS sources
         FROM MoviesNeeded mn
         JOIN Movies m ON mn.movie_key = m.movie_key
         LEFT JOIN MovieSources ms ON m.movie_key = ms.movie_key
         WHERE m.movie_key NOT IN (SELECT movie_key FROM MovieCollection)
-        GROUP BY m.movie_key;
+        GROUP BY m.movie_key, m.title, m.year_of_release, mn.download_link;
         """
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
@@ -44,9 +49,15 @@ def homePage():
 
         for movie in movies:
             movie_source_list = []
-            for sources in movie['sources'].split(","):
-                movie_source_list.append(sources)
+            if not movie['sources']:
+                continue
+            if "," in movie['sources']:
+                for source in movie['sources'].split(","):
+                    movie_source_list.append(source)
+            else:
+                movie_source_list.append(movie['sources'])
             sources[movie['movie_key']] = movie_source_list
+            # print(sources)
 
         cursor.close()
         conn.close()

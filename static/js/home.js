@@ -26,7 +26,7 @@ async function submitMovieRequest() {
 
     // Logic to handle the movie request submission
     // This might involve an AJAX request to your Flask backend
-    const response = await fetch('http://zombyfraser.pythonanywhere.com/add_movie', {
+    const response = await fetch('http://127.0.0.1:5000/add_movie', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',

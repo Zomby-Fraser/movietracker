@@ -160,3 +160,25 @@ input[type="submit"]:hover {
     background-color: #45a049;
 }
 
+.source-options {
+    display: block; /* or inline-block if you want the sources to be next to each other */
+}
+
+.radio-option {
+    display: flex;
+    align-items: center; /* This will vertically align the radio button and label */
+    margin-right: 10px; /* Adjust the space between each set of radio button and label */
+    text-align: left;
+}
+
+.radio-option input[type="radio"] {
+    margin-right: 5px; /* Space between radio button and label text */
+    /* Make sure the radio button doesn't grow to push the label away */
+    flex-shrink: 0;
+    width: 10px;
+}
+
+.radio-option label {
+    white-space: nowrap; /* Prevent the label from wrapping text to a new line */
+    margin-bottom: 0; /* Adjust label bottom margin if necessary */
+}
