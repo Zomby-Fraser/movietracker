@@ -33,6 +33,7 @@
             </div>
     
             <button onclick="submitMovieRequest()">Submit Request</button>
+            <table class="imdb-search-table"><tbody id="imdbSearchResuls" class="modal-content imdb-search"></tbody></table>
         </div>
     </div>
 
@@ -44,9 +45,11 @@
                 <th>Year of Release</th>
                 <th>Available Sources</th>
                 <th>Preferred Source</th>
+                <th>Mark as Downloaded</th>
+                <th>Comments</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="requestedMoviesTable">
             {% for movie in movies %}
             <tr>
                 <td>{{ movie.title }}</td>
@@ -60,14 +63,20 @@
                 </td>
                 <td>
                     <div class="source-options">
-                        {% for source in sources[movie.movie_key] %}
+                        {% for source in movie.sources %}
                             {% if source %}
                                 <div class="radio-option">
-                                    <label for="source_{{ loop.index }}"><input type="radio" id="source_{{ loop.index }}" name="source_{{ movie.movie_key }}" value="{{ source }}">{{ source }}</label>
+                                    <label for="source_{{ source.source_key }}"><input class="radio-btn" type="radio" id="source_{{ source.source_key }}" name="source_{{ movie.movie_key }}" value="{{ source.source_name }}" onclick="toggleRadio(this, event)" {% if source['accepted'] %}checked{% endif %}>{{ source.source_name }}</label>
                                 </div>
                             {% endif %}
                         {% endfor %}
                     </div>
+                </td>
+                <td>
+                    <button>Mark as Downloaded</button>
+                </td>
+                <td>
+                    File could not be downloaded
                 </td>
             </tr>
             {% endfor %}
@@ -75,6 +84,7 @@
                 
     </table>
     
+    <div id="popup" class="popup"></div>
 
     <!-- Rest of your page content -->
 

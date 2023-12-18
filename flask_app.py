@@ -24,45 +24,52 @@ def loginPage():
 def homePage():
     if 'username' in session:
         conn = mysql.connector.connect(**db_config)
-        # Example query (adjust based on your actual database schema)
-        query = """
-        SELECT 
+        cursor = conn.cursor(dictionary=True)  # Use the dictionary cursor to get results as dictionaries
+
+        query = '''SELECT 
             m.movie_key, 
             m.title, 
             m.year_of_release, 
             mn.download_link, 
-            GROUP_CONCAT(ms.source_name) AS sources
+            GROUP_CONCAT(CONCAT(ms.source_name, ' (', ms.size_in_gb, 'GB)')) AS sources,
+            GROUP_CONCAT(ms.source_selected) AS accepted_sources,
+            GROUP_CONCAT(ms.source_key) AS source_keys
         FROM MoviesNeeded mn
         JOIN Movies m ON mn.movie_key = m.movie_key
         LEFT JOIN MovieSources ms ON m.movie_key = ms.movie_key
         WHERE m.movie_key NOT IN (SELECT movie_key FROM MovieCollection)
-        GROUP BY m.movie_key, m.title, m.year_of_release, mn.download_link;
-        """
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor()
-
+        GROUP BY m.movie_key, m.title, m.year_of_release, mn.download_link;'''
         cursor.execute(query)
-        column_names = cursor.column_names
-        movies = [dict(zip(column_names, row)) for row in cursor.fetchall()]
+        movies = cursor.fetchall()
 
-        sources = {}
+        movie_data = []
 
         for movie in movies:
-            movie_source_list = []
-            if not movie['sources']:
-                continue
-            if "," in movie['sources']:
-                for source in movie['sources'].split(","):
-                    movie_source_list.append(source)
-            else:
-                movie_source_list.append(movie['sources'])
-            sources[movie['movie_key']] = movie_source_list
-            # print(sources)
+            # Split the sources and accepted sources
+            sources = movie['sources'].split(',') if movie['sources'] else []
+            accepted_values = movie['accepted_sources'].split(b',') if movie['accepted_sources'] else []
+            source_keys = movie['source_keys'].split(',') if movie['source_keys'] else []
+
+            # Convert each byte in accepted_values to boolean
+            accepted_booleans = [bool(int.from_bytes(byte, 'big')) for byte in accepted_values]
+
+            # Prepare the list to store sources with their acceptance status
+            sources_data = []
+            
+            for i, source in enumerate(sources):
+                # Get the acceptance status for each source, defaulting to False if not available
+                accepted = accepted_booleans[i] if i < len(accepted_booleans) else False
+                sources_data.append({'source_name': source, 'accepted': accepted, 'source_key': source_keys[i]})
+
+            # Update the movie dictionary
+            movie['sources'] = sources_data
+            movie_data.append(movie)
+            del movie['accepted_sources']
 
         cursor.close()
         conn.close()
-        
-        return render_template('home.html', movies=movies, sources=sources)
+
+        return render_template('home.html', movies=movie_data)
     else:
         return 'You are not logged in.', 401
 
@@ -144,9 +151,17 @@ def addMovie():
         conn.close()
 
         return {
+            'divs': 
+                f'''<tr>
+                    <td>{title}</td>
+                    <td>{year}</td>
+                    <td></td>
+                    <td><div class="source-options"></div></td>
+                    <td><button>Mark as Downloaded</button></td>
+                    <td></td>
+                    </tr>''',
             'title': title,
-            'imdb_id': imdb_id,
-            'year_of_release': year
+            'year': year
         }
 
     except requests.RequestException as e:
@@ -156,6 +171,89 @@ def addMovie():
         print('Error parsing IMDB page. The structure of the page might have changed.')
         return None
 
+@app.route('/search_imdb', methods=['POST'])
+def searchIMDB():
+    # try:
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36'}
+        title = request.form.get('title')
+        year = request.form.get('year')
+        url = f"https://www.imdb.com/find/?q={title}({year})"
+
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        # Extracting the title
+        search_results = soup.find_all('li', attrs={'class':'ipc-metadata-list-summary-item ipc-metadata-list-summary-item--click find-result-item find-title-result'})
+
+        # breakpoint()
+
+        results = []
+        base_url = "https://www.imdb.com/title/"
+        for result in search_results:
+            if result.find('img'):
+                image = result.find('img').get('src')
+            else:
+                image = None
+            title = result.find('a', attrs={'class':'ipc-metadata-list-summary-item__t'}).text
+            if result.find('span', attrs={'class':'ipc-metadata-list-summary-item__li'}):
+                year = result.find('span', attrs={'class':'ipc-metadata-list-summary-item__li'}).text
+            else: 
+                image = "Unknown"
+            imdb_url = base_url + result.find('a', attrs={'class':'ipc-metadata-list-summary-item__t'})['href'].split("/")[2]
+            results.append({
+                'image': image,
+                'title': title,
+                'year': year,
+                'imdb_url': imdb_url
+            })
+
+        return jsonify({'results': results})
+
+    # except requests.RequestException as e:
+    #     print(f'Error fetching the IMDB page: {e}')
+    #     # Return a valid error response
+    #     return jsonify({'error': 'Error fetching the IMDB page'}), 500
+
+    # except AttributeError:
+    #     print('Error parsing IMDB page. The structure of the page might have changed.')
+    #     # Return a valid error response
+    #     return jsonify({'error': 'Error parsing IMDB page'}), 500
+
+@app.route('/update_selected_source', methods=['POST'])
+def updateSelectedSource():
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        source_key = request.form.get('source_key')
+        source_selection_flag = request.form.get('source_selection_flag')
+        print(source_selection_flag)
+        if source_selection_flag == "true":
+            source_selection_flag = 1
+        else:
+            source_selection_flag = 0
+
+        query = "UPDATE MovieSources SET source_selected = %s WHERE source_key = %s"
+        cursor.execute(query, (source_selection_flag,source_key))
+        print(query)
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return {
+            'results': 'Success!'
+        }
+
+    except Exception as e:
+        return {
+            'status': 500,
+            'statusText': str(e)
+        }
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5001)
 
