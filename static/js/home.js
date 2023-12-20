@@ -54,8 +54,8 @@ async function addMovie(url, post_body) {
                 // Set the innerHTML of the row
                 row.innerHTML = `
                     <td><img class="imdb-img" src="${result.image}" alt="${result.title}"></td>
-                    <td><p>Title: ${result.title}</p></td>
-                    <td><p class="imdb-year">Year: ${result.year}</p></td>
+                    <td><p><a href='https://www.imdb.com/title/{imdb_id}'>${result.title}</a></p></td>
+                    <td><p class="imdb-year">${result.year}</p></td>
                     <td><button class="imdb-add-btn" onclick="addMovieFromSearch('${result.imdb_url}')">Add Request</button></td>
                 `;
 
@@ -126,4 +126,44 @@ function showPopup(text) {
     // After 3 seconds, remove the show class to hide the popup
     setTimeout(function(){ popup.style.visibility = "hidden"; }, 3000);
 }
+
+let source_movie_key = null;
+function openSourceEditor(movie_key) {
+    document.getElementById('addSourceModal').style.display = 'block';
+    source_movie_key = movie_key;
+}
+
+async function submitSource() { 
+    let source_name = document.getElementById('sourceName').value;
+    let source_tracker_options = document.querySelectorAll('.add-source-radios');
+    let source_size = document.getElementById('sourceSize').value;
+    let source_tracker_key = null;
+    source_tracker_options.forEach(tracker => {
+        if (tracker.checked) {
+            source_tracker_key = tracker.id.split("tracker").at(-1);
+        }
+    });
+
+    if (source_tracker_key === null || source_name.length == 0 || source_size.length == 0) {
+        showPopup('Please make sure a source name and size is specified and a tracker has been selected.');
+        return;
+    }
+
+
+    const response = await fetch(`http://127.0.0.1:5001/add_source`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `movie_key=${source_movie_key}&source_name=${source_name}&source_tracker_key=${source_tracker_key}&source_size=${source_size}`
+    });
+    if (response.ok) {
+        console.log('Update Successful:');
+        window.reload();
+    }
+    else {
+        console.error('Update failed:', response.status, response.statusText);
+    }
+}
+
 

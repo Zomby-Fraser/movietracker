@@ -26,22 +26,28 @@ def homePage():
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)  # Use the dictionary cursor to get results as dictionaries
 
-        query = '''SELECT 
+        if session['role_id'] == 1 or session['role_id'] == 4:
+            source_query = "ms.source_name, ' (', ms.size_in_gb, 'GB) ', '[', tt.torrent_tracker_abbreviation, ']'"
+        else:
+            source_query = "ms.source_name, ' (', ms.size_in_gb, 'GB)'"
+
+        query = f'''SELECT 
             m.movie_key, 
             m.title, 
             m.year_of_release, 
             mn.download_link, 
-            GROUP_CONCAT(CONCAT(ms.source_name, ' (', ms.size_in_gb, 'GB)')) AS sources,
+            GROUP_CONCAT(CONCAT({source_query})) AS sources,
             GROUP_CONCAT(ms.source_selected) AS accepted_sources,
             GROUP_CONCAT(ms.source_key) AS source_keys
         FROM MoviesNeeded mn
         JOIN Movies m ON mn.movie_key = m.movie_key
         LEFT JOIN MovieSources ms ON m.movie_key = ms.movie_key
+        LEFT JOIN TorrentTrackers tt ON ms.source_torrent_tracker_key = tt.torrent_tracker_key
         WHERE m.movie_key NOT IN (SELECT movie_key FROM MovieCollection)
-        GROUP BY m.movie_key, m.title, m.year_of_release, mn.download_link;'''
+        GROUP BY m.movie_key, m.title, m.year_of_release, mn.download_link
+        ORDER BY m.title;'''
         cursor.execute(query)
         movies = cursor.fetchall()
-
         movie_data = []
 
         for movie in movies:
@@ -66,10 +72,19 @@ def homePage():
             movie_data.append(movie)
             del movie['accepted_sources']
 
+        query = f'''
+            SELECT 
+                torrent_tracker_key AS torrent_tracker_key,
+                torrent_tracker_name AS torrent_tracker_name
+            FROM TorrentTrackers
+        '''
+        cursor.execute(query)
+        trackers = cursor.fetchall()
+
         cursor.close()
         conn.close()
 
-        return render_template('home.html', movies=movie_data)
+        return render_template('home.html', movies=movie_data, session=session, trackers=trackers)
     else:
         return 'You are not logged in.', 401
 
@@ -87,10 +102,16 @@ def login():
     try:
         # Connect to the database
         conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
 
         # Query to find the user
-        query = "SELECT * FROM users WHERE username = %s AND password = %s"
+        query = '''SELECT 
+            u.id AS user_id,
+            u.username AS username,
+            ur.users_role_id AS role_id
+        FROM users u
+        INNER JOIN UserRoles ur ON ur.users_id = u.id
+        WHERE u.username = %s AND u.password = %s'''
         cursor.execute(query, (username, hashed_password))
 
         user = cursor.fetchone()
@@ -98,9 +119,9 @@ def login():
         conn.close()
 
         if user:
-            user_id = user[0]
-            session['id'] = user_id
-            session['username'] = username  # Store username in session
+            session['role_id'] = user['role_id']
+            session['id'] = user['user_id']
+            session['username'] = user['username']
             return jsonify({'message': 'Login successful'}), 200
         else:
             return jsonify({'error': 'Invalid credentials'}), 401
@@ -173,7 +194,7 @@ def addMovie():
 
 @app.route('/search_imdb', methods=['POST'])
 def searchIMDB():
-    # try:
+    try:
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36'}
         title = request.form.get('title')
         year = request.form.get('year')
@@ -186,8 +207,6 @@ def searchIMDB():
 
         # Extracting the title
         search_results = soup.find_all('li', attrs={'class':'ipc-metadata-list-summary-item ipc-metadata-list-summary-item--click find-result-item find-title-result'})
-
-        # breakpoint()
 
         results = []
         base_url = "https://www.imdb.com/title/"
@@ -211,15 +230,15 @@ def searchIMDB():
 
         return jsonify({'results': results})
 
-    # except requests.RequestException as e:
-    #     print(f'Error fetching the IMDB page: {e}')
-    #     # Return a valid error response
-    #     return jsonify({'error': 'Error fetching the IMDB page'}), 500
+    except requests.RequestException as e:
+        print(f'Error fetching the IMDB page: {e}')
+        # Return a valid error response
+        return jsonify({'error': 'Error fetching the IMDB page'}), 500
 
-    # except AttributeError:
-    #     print('Error parsing IMDB page. The structure of the page might have changed.')
-    #     # Return a valid error response
-    #     return jsonify({'error': 'Error parsing IMDB page'}), 500
+    except AttributeError:
+        print('Error parsing IMDB page. The structure of the page might have changed.')
+        # Return a valid error response
+        return jsonify({'error': 'Error parsing IMDB page'}), 500
 
 @app.route('/update_selected_source', methods=['POST'])
 def updateSelectedSource():
@@ -229,7 +248,7 @@ def updateSelectedSource():
 
         source_key = request.form.get('source_key')
         source_selection_flag = request.form.get('source_selection_flag')
-        print(source_selection_flag)
+
         if source_selection_flag == "true":
             source_selection_flag = 1
         else:
@@ -237,7 +256,6 @@ def updateSelectedSource():
 
         query = "UPDATE MovieSources SET source_selected = %s WHERE source_key = %s"
         cursor.execute(query, (source_selection_flag,source_key))
-        print(query)
 
         conn.commit()
         cursor.close()
@@ -252,6 +270,38 @@ def updateSelectedSource():
             'status': 500,
             'statusText': str(e)
         }
+
+
+@app.route('/add_source', methods=['POST'])
+def addMovieSource():
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        movie_key = request.form.get('movie_key')
+        source_name = request.form.get('source_name')
+        source_tracker_key = request.form.get('source_tracker_key')
+        source_size = request.form.get('source_size')
+        print(source_tracker_key)
+        query = '''
+            INSERT INTO MovieSources (movie_key, source_name, size_in_gb, source_selected, source_torrent_tracker_key) VALUES(%s, %s, %s, b'0', %s);
+        '''
+        cursor.execute(query, (movie_key, source_name, source_size, source_tracker_key))
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return {
+            'status': 200,
+            'statusText': 'Source Added!'
+        }
+
+    except Exception as e:
+        return {
+            'status': 500,
+            'statusText': str(e)
+        }
+
 
 
 if __name__ == '__main__':

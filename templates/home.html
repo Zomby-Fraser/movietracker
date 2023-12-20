@@ -37,10 +37,29 @@
         </div>
     </div>
 
+    <div id="addSourceModal" class="modal">
+        <div class="modal-content">
+            <div>
+                <h3>Source name:</h3> <input type="text" id="sourceName" name="sourceName">
+            </div>
+            <div>
+                <h3>Source Size in GB:</h3> <input type="text" id="sourceSize" name="sourceSize">
+            </div>
+            <h3 class="add-source-text">
+                Source Tracker:
+            </h3>
+            {% for tracker in trackers %}
+                <div><input class="add-source-radios" type="radio" id="tracker{{ tracker.torrent_tracker_key }}" name="queryType">{{ tracker.torrent_tracker_name }}</div>
+            {% endfor %}
+            <button class="add-source-submit" onclick="submitSource()">Submit</button>
+        </div>
+    </div>
+
     <h1>Manage Movie Requests</h1>
     <table>
         <thead>
             <tr>
+                {% if session.role_id == 1 or session.role_id == 4 %}<th></th>{% endif %}
                 <th>Title</th>
                 <th>Year of Release</th>
                 <th>Available Sources</th>
@@ -52,6 +71,9 @@
         <tbody id="requestedMoviesTable">
             {% for movie in movies %}
             <tr>
+                {% if session.role_id == 1 or session.role_id == 4 %}
+                    <td><button onclick="openSourceEditor({{ movie.movie_key }})">Add Source</button></td>
+                {% endif %}
                 <td>{{ movie.title }}</td>
                 <td>{{ movie.year_of_release }}</td>
                 <td>
@@ -66,7 +88,9 @@
                         {% for source in movie.sources %}
                             {% if source %}
                                 <div class="radio-option">
-                                    <label for="source_{{ source.source_key }}"><input class="radio-btn" type="radio" id="source_{{ source.source_key }}" name="source_{{ movie.movie_key }}" value="{{ source.source_name }}" onclick="toggleRadio(this, event)" {% if source['accepted'] %}checked{% endif %}>{{ source.source_name }}</label>
+                                    <label for="source_{{ source.source_key }}"><input class="radio-btn" type="radio" id="source_{{ source.source_key }}" name="source_{{ movie.movie_key }}" value="{{ source.source_name }}" onclick="toggleRadio(this, event)" {% if source['accepted'] %}checked{% endif %}>
+                                        {{ source.source_name }}
+                                    </label>
                                 </div>
                             {% endif %}
                         {% endfor %}
@@ -75,9 +99,8 @@
                 <td>
                     <button>Mark as Downloaded</button>
                 </td>
-                <td>
-                    File could not be downloaded
-                </td>
+                <td></td>
+                <td><button onclick="editComment()">Edit Comment</button></td>
             </tr>
             {% endfor %}
         </tbody>

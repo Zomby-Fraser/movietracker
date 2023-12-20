@@ -137,7 +137,7 @@ td {
 }
 
 /* Form Styling */
-input[type="text"], input[type="radio"] {
+input[type="text"] {
     margin: 10px 0;
     padding: 8px;
     width: 95%;
@@ -202,6 +202,16 @@ input[type="submit"]:hover {
 .imdb-search-table {
     border: none;
     margin: 0px;
+}
+
+.add-source-radios {
+    width: 10px;
+    margin-right:10px;
+    margin-bottom: 10px;;
+}
+
+.add-source-text {
+    margin: 10px;
 }
 
 .popup {
