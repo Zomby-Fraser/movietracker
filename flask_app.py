@@ -131,9 +131,11 @@ def login():
         WHERE u.username = %s AND u.password = %s'''
         cursor.execute(query, (username, hashed_password))
 
-        user = cursor.fetchone()
+        user = cursor.fetchall()
         cursor.close()
         conn.close()
+
+        user = user[0]
 
         if user:
             session['role_id'] = user['role_id']
@@ -382,9 +384,11 @@ def register():
         WHERE u.username = %s AND u.password = %s'''
         cursor.execute(query, (username, hashed_password))
 
-        user = cursor.fetchone()
+        user = cursor.fetchall()
         cursor.close()
         conn.close()
+
+        user = user[0]
 
         if user:
             session['role_id'] = user['role_id']
