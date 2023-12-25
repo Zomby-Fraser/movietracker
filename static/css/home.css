@@ -137,7 +137,7 @@ td {
 }
 
 /* Form Styling */
-input[type="text"], input[type="radio"] {
+input[type="text"] {
     margin: 10px 0;
     padding: 8px;
     width: 95%;
@@ -160,3 +160,99 @@ input[type="submit"]:hover {
     background-color: #45a049;
 }
 
+.source-options {
+    display: block; /* or inline-block if you want the sources to be next to each other */
+}
+
+.radio-option {
+    display: flex;
+    align-items: center; /* This will vertically align the radio button and label */
+    margin-right: 10px; /* Adjust the space between each set of radio button and label */
+    text-align: left;
+}
+
+.radio-option input[type="radio"] {
+    margin-right: 5px; /* Space between radio button and label text */
+    /* Make sure the radio button doesn't grow to push the label away */
+    flex-shrink: 0;
+    width: 10px;
+}
+
+.radio-option label {
+    white-space: nowrap; /* Prevent the label from wrapping text to a new line */
+    margin-bottom: 0; /* Adjust label bottom margin if necessary */
+}
+
+.imdb-search {
+    display: none;
+    border: none;
+    padding: 20px;
+}
+
+.imdb-search-results {
+    display: flex;
+    align-content: center;
+}
+
+.imdb-img {
+    width: 50px;
+    height: 74px;
+}
+
+.imdb-search-table {
+    border: none;
+    margin: 0px;
+}
+
+.add-source-radios {
+    width: 10px;
+    margin-right:10px;
+    margin-bottom: 10px;;
+}
+
+.add-source-text {
+    margin: 10px;
+}
+
+.popup {
+    visibility: hidden; /* Hidden by default */
+    min-width: 250px;
+    margin-left: -125px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    padding: 16px;
+    position: fixed; /* Stay in the same place */
+    z-index: 1; /* Sit on top */
+    right: 30px; /* Distance from the right */
+    bottom: 30px; /* Distance from the bottom */
+    font-size: 17px;
+}
+
+/* Popup animation styles */
+.popup.show {
+    visibility: visible; /* Show the popup */
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@-webkit-keyframes fadein {
+    from {bottom: 0; opacity: 0;} 
+    to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+    from {bottom: 30px; opacity: 1;} 
+    to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}

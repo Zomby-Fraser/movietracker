@@ -33,6 +33,25 @@
             </div>
     
             <button onclick="submitMovieRequest()">Submit Request</button>
+            <table class="imdb-search-table"><tbody id="imdbSearchResuls" class="modal-content imdb-search"></tbody></table>
+        </div>
+    </div>
+
+    <div id="addSourceModal" class="modal">
+        <div class="modal-content">
+            <div>
+                <h3>Source name:</h3> <input type="text" id="sourceName" name="sourceName">
+            </div>
+            <div>
+                <h3>Source Size in GB:</h3> <input type="text" id="sourceSize" name="sourceSize">
+            </div>
+            <h3 class="add-source-text">
+                Source Tracker:
+            </h3>
+            {% for tracker in trackers %}
+                <div><input class="add-source-radios" type="radio" id="tracker{{ tracker.torrent_tracker_key }}" name="queryType">{{ tracker.torrent_tracker_name }}</div>
+            {% endfor %}
+            <button class="add-source-submit" onclick="submitSource()">Submit</button>
         </div>
     </div>
 
@@ -40,15 +59,21 @@
     <table>
         <thead>
             <tr>
+                {% if session.role_id == 1 or session.role_id == 4 %}<th></th>{% endif %}
                 <th>Title</th>
                 <th>Year of Release</th>
                 <th>Available Sources</th>
                 <th>Preferred Source</th>
+                <th>Mark as Downloaded</th>
+                <th>Comments</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="requestedMoviesTable">
             {% for movie in movies %}
             <tr>
+                {% if session.role_id == 1 or session.role_id == 4 %}
+                    <td><button onclick="openSourceEditor({{ movie.movie_key }})">Add Source</button></td>
+                {% endif %}
                 <td>{{ movie.title }}</td>
                 <td>{{ movie.year_of_release }}</td>
                 <td>
@@ -59,15 +84,31 @@
                     {% endif %}
                 </td>
                 <td>
-                    <!-- Apply the default filter and split in the for loop -->
-                    {% for source in sources[movie.movie_key] %}
-                        {% if source %}
-                            <label class="source-option">
-                                <input type="radio" name="source_{{ movie.movie_key }}" value="{{ source }}">
-                                {{ source }}
-                            </label>
+                    <div class="source-options">
+                        {% for source in movie.sources %}
+                            {% if source %}
+                                <div class="radio-option">
+                                    <label for="source_{{ source.source_key }}"><input class="radio-btn" type="radio" id="source_{{ source.source_key }}" name="source_{{ movie.movie_key }}" value="{{ source.source_name }}" onclick="toggleRadio(this, event)" {% if source['accepted'] %}checked{% endif %}>
+                                        {{ source.source_name }}
+                                    </label>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </td>
+                <td>
+                    <button>Mark as Downloaded</button>
+                </td>
+                <td id="comment{{ movie.movie_key }}">
+                    <span class="comment-text" id="commentText{{ movie.movie_key }}">
+                        {% if movie.comment %}
+                            {{ movie.comment }}
                         {% endif %}
-                    {% endfor %}
+                    </span>
+                    <input type="text" class="comment-input" value="{{ movie.comment }}" style="display: none;">
+                </td>
+                <td>
+                    <button onclick="editComment('{{ movie.movie_key }}')">Edit Comment</button>
                 </td>
             </tr>
             {% endfor %}
@@ -75,6 +116,7 @@
                 
     </table>
     
+    <div id="popup" class="popup"></div>
 
     <!-- Rest of your page content -->
 
