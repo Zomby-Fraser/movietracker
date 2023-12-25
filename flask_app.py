@@ -27,9 +27,8 @@ def loginPage():
         cursor = conn.cursor(dictionary=True) 
         query = "SELECT registration_code, registration_code_used_flag FROM RegistrationCodes WHERE registration_code = %s"
         cursor.execute(query, (registration_code,))
-        registration_check = cursor.fetchone()
-
-        print(registration_check)
+        registration_check = cursor.fetchall()
+        registration_check = registration_check[0]
 
         if len(registration_check) == 0:
             return "Invalid registration code.", 401
