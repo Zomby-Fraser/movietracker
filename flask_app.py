@@ -9,8 +9,8 @@ app = Flask(__name__)
 app.secret_key = 'klahSKDbjasnio'
 
 db_config = {
-    # 'host': 'zombyfraser.mysql.pythonanywhere-services.com',
-    'host': 'localhost',
+    'host': 'zombyfraser.mysql.pythonanywhere-services.com',
+    # 'host': 'localhost',
     'user': 'zombyfraser',
     'password': 'dobqod-Faxjoc-zagbi4',
     'database': 'zombyfraser$default'
