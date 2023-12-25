@@ -371,8 +371,6 @@ def register():
 
         query = '''INSERT INTO UserRoles (users_id, users_role_id) VALUES (%s, 3)'''
         cursor.execute(query, (new_user_id,))
-
-        conn.commit()
         
         # Query to find the user
         query = '''SELECT 
@@ -385,15 +383,18 @@ def register():
         cursor.execute(query, (username, hashed_password))
 
         user = cursor.fetchall()
-        cursor.close()
-        conn.close()
-
         user = user[0]
 
         if user:
             session['role_id'] = user['role_id']
             session['id'] = user['user_id']
             session['username'] = user['username']
+
+            query = '''UPDATE RegistrationCodes SET registration_code_date_used = CURRENT_TIMESTAMP, registration_code_used_flag = 1, registration_code_user_id = %s'''
+            cursor.execute(query, (session['id'],))
+            conn.commit()
+            cursor.close()
+            conn.close()
             return jsonify({'message': 'Login successful'}), 200
         else:
             return jsonify({'error': 'Invalid credentials'}), 401
