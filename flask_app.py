@@ -18,7 +18,24 @@ db_config = {
 
 @app.route('/')
 def loginPage():
-    return render_template('login.html')
+    registration_code = request.args.get('registration_code')
+    if not registration_code:
+        return render_template('login.html')
+    else:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True) 
+        query = "SELECT registration_code, registration_code_used_flag FROM RegistrationCodes WHERE registration_code = %s"
+        cursor.execute(query, (registration_code,))
+        registration_check = cursor.fetchone()
+
+        print(registration_check)
+
+        if len(registration_check) == 0:
+            return "Invalid registration code.", 401
+        elif registration_check['registration_code_used_flag']:
+            return "Registration code already used.", 401
+
+        return render_template('login.html', registration_check=registration_check)
 
 @app.route('/home')
 def homePage():
@@ -36,6 +53,7 @@ def homePage():
             m.title, 
             m.year_of_release, 
             mn.download_link, 
+            mn.comment,
             GROUP_CONCAT(CONCAT({source_query})) AS sources,
             GROUP_CONCAT(ms.source_selected) AS accepted_sources,
             GROUP_CONCAT(ms.source_key) AS source_keys
@@ -109,7 +127,7 @@ def login():
             u.id AS user_id,
             u.username AS username,
             ur.users_role_id AS role_id
-        FROM users u
+        FROM Users u
         INNER JOIN UserRoles ur ON ur.users_id = u.id
         WHERE u.username = %s AND u.password = %s'''
         cursor.execute(query, (username, hashed_password))
@@ -302,7 +320,85 @@ def addMovieSource():
             'statusText': str(e)
         }
 
+@app.route('/update_comment', methods=['POST'])
+def updateMovieComment():
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
 
+        movie_key = request.form.get('movie_key')
+        movie_comment = request.form.get('movie_comment')
+        query = '''
+            UPDATE MoviesNeeded SET comment = %s WHERE movie_key = %s
+        '''
+        cursor.execute(query, (movie_comment, movie_key))
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return {
+            'status': 200,
+            'statusText': 'Source Added!'
+        }
+
+    except Exception as e:
+        return {
+            'status': 500,
+            'statusText': str(e)
+        }
+    
+@app.route('/register', methods=['POST'])
+def register():
+    username = request.form.get('username')
+    password = request.form.get('password')
+
+    if not username or not password:
+        return jsonify({'error': 'Missing username or password'}), 400
+
+    # Hash the password
+    hashed_password = hashlib.sha256(password.encode()).hexdigest()
+
+    try:
+        # Connect to the database
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+
+        # Query to find the user
+        query = '''INSERT INTO Users (username, password) VALUES (%s, %s)'''
+        cursor.execute(query, (username, hashed_password))
+        new_user_id = cursor.lastrowid
+
+        query = '''INSERT INTO UserRoles (users_id, users_role_id) VALUES (%s, 3)'''
+        cursor.execute(query, (new_user_id,))
+
+        conn.commit()
+        
+        # Query to find the user
+        query = '''SELECT 
+            u.id AS user_id,
+            u.username AS username,
+            ur.users_role_id AS role_id
+        FROM Users u
+        INNER JOIN UserRoles ur ON ur.users_id = u.id
+        WHERE u.username = %s AND u.password = %s'''
+        cursor.execute(query, (username, hashed_password))
+
+        user = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        if user:
+            session['role_id'] = user['role_id']
+            session['id'] = user['user_id']
+            session['username'] = user['username']
+            return jsonify({'message': 'Login successful'}), 200
+        else:
+            return jsonify({'error': 'Invalid credentials'}), 401
+
+    except mysql.connector.Error as err:
+        return jsonify({'error': str(err)}), 500
+    except Exception as e:
+        return jsonify({'error': str(err)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)

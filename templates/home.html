@@ -99,8 +99,17 @@
                 <td>
                     <button>Mark as Downloaded</button>
                 </td>
-                <td></td>
-                <td><button onclick="editComment()">Edit Comment</button></td>
+                <td id="comment{{ movie.movie_key }}">
+                    <span class="comment-text" id="commentText{{ movie.movie_key }}">
+                        {% if movie.comment %}
+                            {{ movie.comment }}
+                        {% endif %}
+                    </span>
+                    <input type="text" class="comment-input" value="{{ movie.comment }}" style="display: none;">
+                </td>
+                <td>
+                    <button onclick="editComment('{{ movie.movie_key }}')">Edit Comment</button>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

@@ -166,4 +166,49 @@ async function submitSource() {
     }
 }
 
+function editComment(movieId) {
+    // Get the elements
+    var commentText = document.querySelector('#comment' + movieId + ' .comment-text');
+    var commentInput = document.querySelector('#comment' + movieId + ' .comment-input');
+    
+    // Toggle visibility
+    if (commentText) {
+        commentText.style.display = 'none'; // Hide the static text
+    }
+    commentInput.style.display = ''; // Show the input field
+    
+    // Focus the input field and select the text
+    commentInput.focus();
+    commentInput.select();
+    
+    // Optionally, listen for the enter key to save the comment
+    commentInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            // Call a function to save the comment, passing the movie ID and new value
+            saveComment(movieId, commentInput.value, commentInput);
+        }
+    });
+}
 
+async function saveComment(movie_key, comment, comment_input) {
+    // Here you could send the new comment to the server via AJAX
+    const response = await fetch(`http://127.0.0.1:5001/update_comment`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `movie_key=${movie_key}&movie_comment=${comment}`
+    });
+    if (response.ok) {
+        console.log('Update Successful.');
+        console.log(`commentText${movie_key}`);
+        comment_text_span = document.getElementById(`commentText${movie_key}`);
+        comment_text_span.innerHTML= comment;
+        comment_text_span.style.display = '';
+        comment_input.style.display = 'none';
+        // comment_input.blur();
+    }
+    else {
+        console.error('Update failed:', response.status, response.statusText);
+    }
+}
