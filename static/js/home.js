@@ -206,7 +206,22 @@ async function saveComment(movie_key, comment, comment_input) {
         comment_text_span.innerHTML= comment;
         comment_text_span.style.display = '';
         comment_input.style.display = 'none';
-        // comment_input.blur();
+    }
+    else {
+        console.error('Update failed:', response.status, response.statusText);
+    }
+}
+
+async function markAsDownloaded(movie_key) {
+    const response = await fetch(`/mark_movie_as_downloaded`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `movie_key=${movie_key}`
+    });
+    if (response.ok) {
+        console.log('Update Successful.');
     }
     else {
         console.error('Update failed:', response.status, response.statusText);
