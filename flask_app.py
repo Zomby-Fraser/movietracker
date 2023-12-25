@@ -9,7 +9,7 @@ app = Flask(__name__)
 app.secret_key = 'klahSKDbjasnio'
 
 db_config = {
-    'host': 'localhost',
+    'host': 'zombyfraser.mysql.pythonanywhere-services.com',
     'user': 'zombyfraser',
     'password': 'dobqod-Faxjoc-zagbi4',
     'database': 'zombyfraser$default'
@@ -131,9 +131,11 @@ def login():
         WHERE u.username = %s AND u.password = %s'''
         cursor.execute(query, (username, hashed_password))
 
-        user = cursor.fetchone()
+        user = cursor.fetchall()
         cursor.close()
         conn.close()
+
+        user = user[0]
 
         if user:
             session['role_id'] = user['role_id']
@@ -382,9 +384,11 @@ def register():
         WHERE u.username = %s AND u.password = %s'''
         cursor.execute(query, (username, hashed_password))
 
-        user = cursor.fetchone()
+        user = cursor.fetchall()
         cursor.close()
         conn.close()
+
+        user = user[0]
 
         if user:
             session['role_id'] = user['role_id']
