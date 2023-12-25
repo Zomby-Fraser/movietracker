@@ -11,7 +11,8 @@ app = Flask(__name__)
 app.secret_key = 'klahSKDbjasnio'
 
 db_config = {
-    'host': 'zombyfraser.mysql.pythonanywhere-services.com',
+    # 'host': 'zombyfraser.mysql.pythonanywhere-services.com',
+    'host': 'localhost',
     'user': 'zombyfraser',
     'password': 'dobqod-Faxjoc-zagbi4',
     'database': 'zombyfraser$default'
@@ -403,6 +404,33 @@ def register():
         return jsonify({'error': str(err)}), 500
     except Exception as e:
         return jsonify({'error': str(err)}), 500
+
+@app.route('/mark_movie_as_downloaded', methods=['POST'])
+def markMovieAsDownloaded():
+    movie_key = request.form.get('movie_key')
+    user_id = session['id']
+
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+
+        query = '''INSERT INTO MovieCollection (movie_key, user_id) VALUES (%s, %s)'''
+        cursor.execute(query, (movie_key, user_id))
+
+        query = '''DELETE FROM MoviesNeeded WHERE movie_key = %s'''
+        cursor.execute(query, (movie_key,))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return jsonify({'message': 'Movie added to collection'}), 200
+
+    except Exception as e:
+        return {
+            'status': 500,
+            'statusText': str(e)
+        }
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
