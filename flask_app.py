@@ -3,7 +3,6 @@ import hashlib
 import mysql.connector
 from mysql.connector.cursor import MySQLCursorDict
 import requests
-import re
 from bs4 import BeautifulSoup
 
 app = Flask(__name__)

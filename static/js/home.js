@@ -34,7 +34,7 @@ async function addMovieFromSearch(url) {
 }
 
 async function addMovie(url, post_body) {
-    const response = await fetch(`http://127.0.0.1:5001/${url}`, {
+    const response = await fetch(`/${url}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -103,7 +103,7 @@ async function toggleRadio(radio) {
 }
 
 async function updateSelectedSource(source_key, source_selection_flag) {
-    const response = await fetch(`http://127.0.0.1:5001/update_selected_source`, {
+    const response = await fetch(`/update_selected_source`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -150,7 +150,7 @@ async function submitSource() {
     }
 
 
-    const response = await fetch(`http://127.0.0.1:5001/add_source`, {
+    const response = await fetch(`/add_source`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -192,7 +192,7 @@ function editComment(movieId) {
 
 async function saveComment(movie_key, comment, comment_input) {
     // Here you could send the new comment to the server via AJAX
-    const response = await fetch(`http://127.0.0.1:5001/update_comment`, {
+    const response = await fetch(`/update_comment`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
