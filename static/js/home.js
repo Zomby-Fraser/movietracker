@@ -34,7 +34,7 @@ async function addMovieFromSearch(url) {
 }
 
 async function addMovie(url, post_body) {
-    const response = await fetch(`/${url}`, {
+    const response = await fetch(`${url}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
