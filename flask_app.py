@@ -443,6 +443,44 @@ def markMovieAsDownloaded():
             'status': 500,
             'statusText': str(e)
         }
+    
+@app.route('/update_property', methods=['POST'])
+def updateMovieProperty():
+    movie_key = request.form.get('movie_key')
+    type = request.form.get('type')
+    if type == 'bluray':
+        bluray = 1
+        streaming = 0
+    elif type == 'streaming':
+        bluray = 0
+        streaming = 1
+    elif type == 'none':
+        bluray = 0
+        streaming = 0
+    else:
+        return {
+            'status': 422,
+            'statusText': 'Invalid property type. `bluray`, `streaming`, and `none` are currently the only valid entries.'
+        }
+
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+
+        query = 'UPDATE Movies SET no_blu_ray_release_flag = %s, only_on_streaming_flag = %s WHERE movie_key = %s'
+        cursor.execute(query, (bluray, streaming, movie_key))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return jsonify({'message': 'Movie propety updated.'}), 200
+
+    except Exception as e:
+        return {
+            'status': 500,
+            'statusText': str(e)
+        }
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
