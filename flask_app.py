@@ -17,7 +17,7 @@ db_config = {
 }
 
 def process_title(movie_name):
-    prefixes = ('The ', 'A ', 'An ')
+    prefixes = ('The ', 'A ', 'An ', 'And ')
     for prefix in prefixes:
         if movie_name.startswith(prefix):
             return movie_name[len(prefix):] + ", " + prefix.strip()
@@ -60,6 +60,8 @@ def homePage():
             m.year_of_release, 
             mn.download_link, 
             mn.comment,
+            m.only_on_streaming_flag,
+            m.no_blu_ray_release_flag,
             GROUP_CONCAT(CONCAT({source_query})) AS sources,
             GROUP_CONCAT(ms.source_selected) AS accepted_sources,
             GROUP_CONCAT(ms.source_key) AS source_keys

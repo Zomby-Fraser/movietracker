@@ -70,7 +70,12 @@
         </thead>
         <tbody id="requestedMoviesTable">
             {% for movie in movies %}
-            <tr>
+            <tr 
+                {% if movie.only_on_streaming_flag %} 
+                    style="background-color: pink;" 
+                {% elif movie.no_blu_ray_release_flag %}
+                    style="background-color: lightblue;"
+                {% endif %} >
                 {% if session.role_id == 1 or session.role_id == 4 %}
                     <td><button onclick="openSourceEditor({{ movie.movie_key }})">Add Source</button></td>
                 {% endif %}
