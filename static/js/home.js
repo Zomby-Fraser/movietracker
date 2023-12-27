@@ -227,3 +227,47 @@ async function markAsDownloaded(movie_key) {
         console.error('Update failed:', response.status, response.statusText);
     }
 }
+
+function toggleDropdown(movie_key) {
+    document.getElementById(`propertiesDropDown${movie_key}`).classList.toggle("show");
+}
+
+// // Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+    if (!event.target.matches('.dropbtn')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
+}
+
+async function updateProperty(movie_key, type) {
+    let row = document.getElementById(`movie${movie_key}`);
+    if (type == 'bluray') {
+        row.style.backgroundColor = 'lightblue';
+    }
+    else if (type == 'streaming') {
+        row.style.backgroundColor = 'pink';
+    }
+    else {
+        row.style.backgroundColor = '';
+    }
+
+    const response = await fetch(`/update_property`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `movie_key=${movie_key}&type=${type}`
+    });
+    if (response.ok) {
+        console.log('Update Successful.');
+    }
+    else {
+        console.error('Update failed:', response.status, response.statusText);
+    }
+}

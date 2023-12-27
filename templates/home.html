@@ -70,7 +70,7 @@
         </thead>
         <tbody id="requestedMoviesTable">
             {% for movie in movies %}
-            <tr 
+            <tr id="movie{{ movie.movie_key }}"
                 {% if movie.only_on_streaming_flag %} 
                     style="background-color: pink;" 
                 {% elif movie.no_blu_ray_release_flag %}
@@ -114,6 +114,16 @@
                 </td>
                 <td>
                     <button onclick="editComment('{{ movie.movie_key }}')">Edit Comment</button>
+                </td>
+                <td>
+                    <div class="dropdown">
+                        <button class="dropbtn" onclick="toggleDropdown({{ movie.movie_key }})">Properties</button>
+                        <div id="propertiesDropDown{{ movie.movie_key }}" class="dropdown-content">
+                            <label><input onclick="updateProperty({{ movie.movie_key }}, 'none')" type="radio" name="option{{ movie.movie_key }}" value="blueray{{ movie.movie_key }}" checked> None</label>
+                            <label><input onclick="updateProperty({{ movie.movie_key }}, 'bluray')" type="radio" name="option{{ movie.movie_key }}" value="blueray{{ movie.movie_key }}" {% if movie.no_blu_ray_release_flag %} checked {% endif %}> Blu-Ray Only</label>
+                            <label><input onclick="updateProperty({{ movie.movie_key }}, 'streaming')" type="radio" name="option{{ movie.movie_key }}" value="streaming{{ movie.movie_key }}" {% if movie.only_on_streaming_flag %} checked {% endif %}> Streaming Service Only</label>
+                        </div>
+                    </div>
                 </td>
             </tr>
             {% endfor %}
