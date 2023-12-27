@@ -9,12 +9,19 @@ app = Flask(__name__)
 app.secret_key = 'klahSKDbjasnio'
 
 db_config = {
-    'host': 'zombyfraser.mysql.pythonanywhere-services.com',
-    # 'host': 'localhost',
+    # 'host': 'zombyfraser.mysql.pythonanywhere-services.com',
+    'host': 'localhost',
     'user': 'zombyfraser',
     'password': 'dobqod-Faxjoc-zagbi4',
     'database': 'zombyfraser$default'
 }
+
+def process_title(movie_name):
+    prefixes = ('The ', 'A ', 'An ')
+    for prefix in prefixes:
+        if movie_name.startswith(prefix):
+            return movie_name[len(prefix):] + ", " + prefix.strip()
+    return movie_name
 
 @app.route('/')
 def loginPage():
@@ -68,6 +75,8 @@ def homePage():
         movie_data = []
 
         for movie in movies:
+            movie['title'] = process_title(movie['title'])
+
             # Split the sources and accepted sources
             sources = movie['sources'].split(',') if movie['sources'] else []
             accepted_values = movie['accepted_sources'].split(b',') if movie['accepted_sources'] else []
@@ -88,6 +97,8 @@ def homePage():
             movie['sources'] = sources_data
             movie_data.append(movie)
             del movie['accepted_sources']
+
+        movie_data = sorted(movie_data, key=lambda x: x['title'].lower())
 
         query = f'''
             SELECT 
