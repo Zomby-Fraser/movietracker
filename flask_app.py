@@ -9,8 +9,8 @@ app = Flask(__name__)
 app.secret_key = 'klahSKDbjasnio'
 
 db_config = {
-    'host': 'zombyfraser.mysql.pythonanywhere-services.com',
-    # 'host': 'localhost',
+    # 'host': 'zombyfraser.mysql.pythonanywhere-services.com',
+    'host': 'localhost',
     'user': 'zombyfraser',
     'password': 'dobqod-Faxjoc-zagbi4',
     'database': 'zombyfraser$default'
@@ -123,6 +123,8 @@ def login():
     username = request.form.get('username')
     password = request.form.get('password')
 
+    print(username)
+
     if not username or not password:
         return jsonify({'error': 'Missing username or password'}), 400
 
@@ -148,9 +150,8 @@ def login():
         cursor.close()
         conn.close()
 
-        user = user[0]
-
         if user:
+            user = user[0]
             session['role_id'] = user['role_id']
             session['id'] = user['user_id']
             session['username'] = user['username']
@@ -160,7 +161,7 @@ def login():
 
     except mysql.connector.Error as err:
         return jsonify({'error': str(err)}), 500
-    except Exception as e:
+    except Exception as err:
         return jsonify({'error': str(err)}), 500
 
 @app.route('/logout')
