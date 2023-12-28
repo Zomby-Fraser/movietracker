@@ -14,7 +14,8 @@ async function login(event) {
         console.log('Login successful:', data);
         window.location.href = '/home';
     } else {
-        console.error('Login failed:', response.status, response.statusText, response.error);
+        const data = await response.json();
+        showPopup(`Login failed: ${data.error}`);
     }
 }
 
@@ -34,6 +35,16 @@ async function register(event) {
         console.log('Registration successful:', data);
         window.location.href = '/home';
     } else {
-        console.error('Login failed:', response.status, response.statusText, response.error);
+        showPopup('Login failed:', response.status, response.statusText, response.error);
+
     }
+}
+
+function showPopup(text) {
+    var popup = document.getElementById("popup");
+    popup.innerHTML = text;
+    popup.style.visibility = 'visible';
+
+    // After 3 seconds, remove the show class to hide the popup
+    setTimeout(function(){ popup.style.visibility = "hidden"; }, 3000);
 }
