@@ -133,6 +133,11 @@ function openSourceEditor(movie_key) {
     source_movie_key = movie_key;
 }
 
+function closeSourceEditor() {
+    document.getElementById('addSourceModal').style.display = '';
+    source_movie_key = null;
+}
+
 async function submitSource() { 
     let source_name = document.getElementById('sourceName').value;
     let source_tracker_options = document.querySelectorAll('.add-source-radios');
@@ -158,7 +163,15 @@ async function submitSource() {
         body: `movie_key=${source_movie_key}&source_name=${source_name}&source_tracker_key=${source_tracker_key}&source_size=${source_size}`
     });
     if (response.ok) {
-        console.log('Update Successful:');
+        const data = await response.json();
+        console.log(`Update Successful: ${data.sourceMovieKey}`);
+        closeSourceEditor();
+        document.getElementById(`sourceOptions${data.sourceMovieKey}`).innerHTML += 
+        `<div class="radio-option">
+            <label for="source_${data.sourceKey}"><input class="radio-btn" type="radio" id="source_${data.sourceKey}" name="source_${data.sourceMovieKey}" value="${data.sourceName}" onclick="toggleRadio(this, event)" {% if source['accepted'] %}checked{% endif %}>
+                ${data.sourceName}
+            </label>
+        </div>`
         window.reload();
     }
     else {

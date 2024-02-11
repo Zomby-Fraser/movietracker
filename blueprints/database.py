@@ -19,7 +19,6 @@ def pull(conn, query, params = None):
     cursor.execute(query, params)
     results = cursor.fetchall()
     cursor.close()
-    print(results)
     return results
 
 def execute(conn, query, params = None):

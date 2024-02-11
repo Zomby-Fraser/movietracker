@@ -52,12 +52,15 @@ def addMovieSource():
         query = '''
             INSERT INTO MovieSources (movie_key, source_name, size_in_gb, source_selected, source_torrent_tracker_key) VALUES(%s, %s, %s, b'0', %s);
         '''
-        database.execute(conn, query, (movie_key, source_name, source_size, source_tracker_key))
+        new_source_key = database.execute(conn, query, (movie_key, source_name, source_size, source_tracker_key))
         conn.close()
 
         return {
             'status': 200,
-            'statusText': 'Source Added!'
+            'statusText': 'Source Added!',
+            'sourceKey': new_source_key,
+            'sourceMovieKey': movie_key,
+            'sourceName': source_name
         }
 
     except Exception as e:
