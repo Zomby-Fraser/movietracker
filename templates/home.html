@@ -89,7 +89,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    <div class="source-options">
+                    <div class="source-options" id="sourceOptions{{ movie.movie_key }}">
                         {% for source in movie.sources %}
                             {% if source %}
                                 <div class="radio-option">
