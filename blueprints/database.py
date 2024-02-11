@@ -3,6 +3,7 @@ import os
 
 def new_conn():
     db_host = os.environ.get('DB_HOST')
+    print(db_host)
     db_user = os.environ.get('DB_USER')
     db_pass = os.environ.get('DB_PASS')
     db = os.environ.get('DB')

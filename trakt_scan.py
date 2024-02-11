@@ -1,7 +1,11 @@
 import requests
 import blueprints.database as database
+from dotenv import load_dotenv
+
+load_dotenv()
 
 conn = database.new_conn()
+
 
 # Replace these with your actual client ID and access token
 client_id = '472a8c2f7988932746210823828708957e6705c59e8246c9f58ce6cc44ce2dce'
