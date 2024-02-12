@@ -1,0 +1,333 @@
+/* Header Styling */
+#header {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+
+/* Modal Styling */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content button,
+.modal-content input[type="radio"] {
+    display: block; /* Makes each button and input take up a full line */
+    margin-bottom: 10px; /* Adds spacing between each element */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    box-sizing: border-box; /* Ensures padding is included in the width */
+}
+
+.query-type {
+    background-color: #fefefe;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Add other styles as needed */
+
+/* General Body Styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+/* Header Styling */
+#header {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+
+#header button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#header button:hover {
+    background-color: #0056b3;
+}
+
+/* Table Styling */
+table {
+    width: 90%;
+    margin: 20px auto;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th {
+    height: 50px;
+    background-color: #f0f0f0;
+    text-align: left;
+    padding: 8px;
+}
+
+td {
+    padding: 8px;
+    text-align: left;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    box-sizing: border-box; 
+    display: flex; /* Enables Flexbox */
+    flex-direction: column; /* Stacks children vertically */
+    align-items: center; /* Centers children horizontally */
+    justify-content: center; /* Centers children vertically */
+}
+
+.radio-container {
+    display: flex; /* Enables Flexbox for label */
+    align-items: center; /* Centers radio button and text vertically */
+    margin-bottom: 10px; /* Adds some space below each label */
+}
+
+.radio-container input[type="radio"] {
+    margin-right: 10px; /* Adds some space between the radio button and the text */
+}
+
+.modal-content input[type="radio"] {
+    /* display: block;  */
+    margin-bottom: 10px; 
+    /* width: 100%; */
+    text-align: center; /* Center text for buttons and labels */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 40%;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Form Styling */
+input[type="text"] {
+    margin: 10px 0;
+    padding: 8px;
+    width: 95%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+input[type="submit"], button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+.source-options {
+    display: block; /* or inline-block if you want the sources to be next to each other */
+}
+
+.imdb-search {
+    display: none;
+    border: none;
+    padding: 20px;
+}
+
+.imdb-img {
+    width: 50px;
+    height: 74px;
+}
+
+.imdb-search-table {
+    border: none;
+    margin: 0px;
+}
+
+.add-source-radios {
+    width: 10px;
+    margin-right:10px;
+    margin-bottom: 10px;;
+}
+
+.add-source-text {
+    margin: 10px;
+}
+/* 
+.popup {
+    align-items: center; /* Vertical alignment */
+    justify-content: center; /* Horizontal alignment */
+    visibility: hidden; /* Hidden by default */
+    min-width: 400px;
+    height: 50px;
+    background-color: #333;
+    color: #fff;
+    border-radius: 2px;
+    padding: 16px;
+    position: fixed; /* Stay in the same place */
+    z-index: 1; /* Sit on top */
+    right: 30px; /* Distance from the right */
+    bottom: 30px; /* Distance from the bottom */
+    font-size: 17px;
+} */
+
+/* Popup animation styles */
+.popup.show {
+    visibility: visible; /* Show the popup */
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@-webkit-keyframes fadein {
+    from {bottom: 0; opacity: 0;} 
+    to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+    from {bottom: 30px; opacity: 1;} 
+    to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
+
+/* Style the dropdown button */
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+/* Dropdown container */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown items */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+/* Style the radio buttons and labels */
+.dropdown-content label {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content label:hover {
+    background-color: #f1f1f1
+}
+
+/* Style the dropdown items to be displayed when 'show' class is added */
+.dropdown-content.show {
+    display: block;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.page-button {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.page-button:hover {
+    background-color: #0056b3;
+}
+
+.page-info {
+    font-size: 16px;
+}
+
+#jumpToPageInput {
+    padding: 5px;
+    width: 100px;
+}
